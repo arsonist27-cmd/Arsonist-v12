@@ -9,7 +9,7 @@ import requests
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 
 from cluster_client.cluster_agent import maybe_start_cluster_agent
-from control_plane import federation_api, mesh_bootstrap, mesh_routes
+from control_plane import federation_api, mesh_bootstrap, mesh_routes, v11_api
 from control_plane.autoscaler import start_autoscaler_loop
 from control_plane.coordinator import Coordinator, build_coordinator
 from control_plane.discovery import start_discovery_task
@@ -25,7 +25,7 @@ from shared.models import JobRequest, NodeRegistration, NodeType
 from shared.utils import now_ts, setup_logging
 
 logger = setup_logging("control.app")
-app = FastAPI(title="Arsonist OS v9 Control Plane (v8 compatible)")
+app = FastAPI(title="Arsonist OS v11 Control Plane (v8/v9/v10 compatible)")
 COORDINATOR: Coordinator = build_coordinator()
 memory = ClusterMemory(
     db_path=os.getenv("ARSONIST_DB_PATH", "control_plane/arsonist.db"),
@@ -123,6 +123,7 @@ federation_api.wire_federation_routes(memory, schedule_once)
 app.include_router(federation_api.router)
 mesh_routes.wire_mesh_routes(memory, schedule_once)
 app.include_router(mesh_routes.router)
+v11_api.attach_v11(app, require_token)
 
 
 def _provision_node(node_type: NodeType) -> None:

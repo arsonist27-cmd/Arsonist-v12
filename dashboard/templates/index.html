@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Arsonist OS v10 Dashboard</title>
+    <title>Arsonist OS v11 Dashboard</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <main class="container">
-      <h1>Arsonist OS v10 Dashboard</h1>
+      <h1>Arsonist OS v11 Dashboard</h1>
       <form method="post" action="/submit" class="job-form">
         <label>Type
           <select name="type">
@@ -32,6 +32,25 @@
         </label>
         <button type="submit">Submit Job</button>
       </form>
+
+      <section id="v11-root" class="fed-root">
+        <h2>AI orchestration (v11)</h2>
+        <p class="muted">Polls <code>/api/v11</code> for inference, GPU, and deployment metrics (requires control plane API token).</p>
+        <div class="fed-section fed-two-col">
+          <div>
+            <h3>Inference metrics</h3>
+            <pre id="v11-inference-pre" class="compact-pre">—</pre>
+          </div>
+          <div>
+            <h3>GPU metrics</h3>
+            <pre id="v11-gpu-pre" class="compact-pre">—</pre>
+          </div>
+        </div>
+        <div class="fed-section">
+          <h3>Deployments</h3>
+          <pre id="v11-deploy-pre" class="compact-pre">—</pre>
+        </div>
+      </section>
 
       <section id="mesh-root" class="fed-root">
         <h2>Decentralized mesh (v10)</h2>

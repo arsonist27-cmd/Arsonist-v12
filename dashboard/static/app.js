@@ -162,10 +162,27 @@ async function refreshMesh() {
   }
 }
 
+async function refreshV11() {
+  const inf = document.getElementById("v11-inference-pre");
+  const gpu = document.getElementById("v11-gpu-pre");
+  const dep = document.getElementById("v11-deploy-pre");
+  if (!inf || !gpu || !dep) return;
+  try {
+    const res = await fetch("/api/v11");
+    const bundle = await res.json();
+    inf.textContent = JSON.stringify(bundle.inference_metrics || {}, null, 2);
+    gpu.textContent = JSON.stringify(bundle.gpu_metrics || {}, null, 2);
+    dep.textContent = JSON.stringify(bundle.deployment_metrics || {}, null, 2);
+  } catch (err) {
+    inf.textContent = "Failed: " + err;
+  }
+}
+
 async function refresh() {
   try {
     await refreshFederation();
     await refreshMesh();
+    await refreshV11();
     const res = await fetch("/api/cluster");
     const data = await res.json();
     const metrics = data.metrics || {};

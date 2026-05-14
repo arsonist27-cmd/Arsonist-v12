@@ -81,7 +81,20 @@ def mesh_view() -> Any:
     return jsonify(out)
 
 
-@app.get("/api/cluster")
+@app.get("/api/v11")
+def v11_view() -> Any:
+    out: Dict[str, Any] = {"control_plane": CONTROL_URL}
+    for key, path in (
+        ("inference_metrics", "/inference_metrics"),
+        ("gpu_metrics", "/gpu_metrics"),
+        ("deployment_metrics", "/deployment_metrics"),
+    ):
+        try:
+            resp = requests.get(f"{CONTROL_URL}{path}", headers=_headers(), timeout=3)
+            out[key] = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {"raw": resp.text}
+        except requests.RequestException as exc:
+            out[key] = {"error": str(exc)}
+    return jsonify(out)
 def cluster() -> Dict[str, Any]:
     nodes = _get("/nodes")
     jobs = _get("/jobs")

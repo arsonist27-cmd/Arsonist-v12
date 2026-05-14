@@ -1,4 +1,4 @@
-# Arsonist OS v8 / v9 / v10 - Self-Healing AI Cloud OS
+# Arsonist OS v8 / v9 / v10 / v11 - Self-Healing AI Cloud OS
 
 Arsonist OS v8 is a mini distributed AI orchestration layer inspired by Kubernetes:
 
@@ -11,6 +11,13 @@ Arsonist OS v8 is a mini distributed AI orchestration layer inspired by Kubernet
 
 ```text
 arsonist-v8/
+├── orchestrator/         # v11 runtime + deployments + rollouts
+├── gpu/                  # v11 GPU discovery, VRAM, scheduling, metrics
+├── models/               # v11 registry, cache, download, routing
+├── inference/            # v11 OpenAI-compatible API + executors
+├── containers/           # v11 sandbox profiles + image build helpers
+├── scaling/              # v11 inference/GPU autoscaling hooks
+├── telemetry/            # v11 inference + workload metrics
 ├── mesh/                 # v10 gossip + mesh routing + partitions + anti-entropy
 ├── distributed_queue/    # v10 mesh event log + replicated queue metadata
 ├── consensus/            # v10 optional raft / leases / distributed locks
@@ -29,6 +36,7 @@ arsonist-v8/
 │   ├── memory.py
 │   ├── mesh_bootstrap.py
 │   ├── mesh_routes.py
+│   ├── v11_api.py
 ├── node/
 │   └── agent.py
 ├── scheduler/
@@ -45,6 +53,7 @@ arsonist-v8/
 │   └── docker_runner.py
 ├── shared/
 │   ├── models.py
+│   ├── ai_workloads.py
 │   └── utils.py
 ├── tests/
 │   ├── integration_sim.py
@@ -52,7 +61,10 @@ arsonist-v8/
 │   ├── stress_test.py
 │   ├── partition_sim.py
 │   ├── mesh_failover_sim.py
-│   └── gossip_stress_test.py
+│   ├── gossip_stress_test.py
+│   ├── gpu_failover_sim.py
+│   ├── inference_stress_test.py
+│   └── deployment_sim.py
 ├── requirements.txt
 └── README.md
 ```
@@ -355,6 +367,41 @@ export PYTHONPATH=$PWD
 python tests/partition_sim.py
 python tests/mesh_failover_sim.py
 python tests/gossip_stress_test.py
+```
+
+### Arsonist OS v11 — AI-native orchestration (optional)
+
+Adds GPU discovery/scheduling, model registry, container runtime orchestration, OpenAI-compatible inference routes (`/v1/*`), deployment/rollout helpers, and telemetry endpoints — without removing v8 jobs, federation, or mesh.
+
+**Enable AI orchestration features (autoscaler background threads):**
+
+- `ARSONIST_AI_ORCHESTRATION_ENABLED=true` **or** `ARSONIST_ORCHESTRATION_MODE=ai` (also accepts `ai_native`, `v11`)
+
+**Inference backend:**
+
+- `OLLAMA_HOST` (default `http://127.0.0.1:11434`) for `/v1/chat/completions`, `/v1/embeddings`, `/v1/generate`
+
+**Auth:**
+
+- Same `ARSONIST_API_TOKEN` bearer as other admin APIs for metrics and model registry routes.
+- Optional dedicated `ARSONIST_INFERENCE_API_TOKEN` for inference-only clients.
+- JWT: set `ARSONIST_JWT_SECRET` and encode `scope` of `arsonist-inference` (or reuse node/admin scopes as implemented in `security/inference_auth.py`).
+- If **no** API token and **no** JWT secret are configured, inference auth is relaxed for local dev only.
+
+**Notable HTTP routes:**
+
+- `POST /v1/chat/completions`, `POST /v1/embeddings`, `POST /v1/generate`
+- `GET /inference_metrics`, `GET /gpu_metrics`, `GET /deployment_metrics`
+- `POST /v11/models/register`, `GET /v11/models/search?q=...`
+- `POST /v11/deployments`, `POST /v11/rollouts`
+
+**Simulations:**
+
+```bash
+export PYTHONPATH=$PWD
+python tests/gpu_failover_sim.py
+python tests/inference_stress_test.py
+python tests/deployment_sim.py
 ```
 
 ### Scaling
