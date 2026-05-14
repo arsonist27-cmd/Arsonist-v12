@@ -1,0 +1,152 @@
+services:
+  control-plane:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-control-plane
+    command: uvicorn control_plane.app:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - ARSONIST_DB_PATH=/app/data/arsonist.db
+      - ARSONIST_API_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
+      - ARSONIST_PROVISIONER_URL=http://provisioner:8100/provision
+      - ARSONIST_PROVISIONER_TOKEN=${ARSONIST_PROVISIONER_TOKEN:-change-me-provisioner-token}
+    volumes:
+      - ./control_plane:/app/control_plane
+      - ./shared:/app/shared
+      - ./sandbox:/app/sandbox
+      - ./data:/app/data
+    depends_on:
+      - provisioner
+    restart: unless-stopped
+
+  provisioner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-provisioner
+    command: uvicorn provisioner.app:app --host 0.0.0.0 --port 8100
+    environment:
+      - ARSONIST_PROVISIONER_TOKEN=${ARSONIST_PROVISIONER_TOKEN:-change-me-provisioner-token}
+    volumes:
+      - ./provisioner:/app/provisioner
+    restart: unless-stopped
+
+  node-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-node-gpu
+    command: python node/agent.py --port 9001 --node-type GPU --gpu
+    depends_on:
+      - control-plane
+    environment:
+      - CONTROL_PLANE_URL=http://control-plane:8000
+      - CONTROL_PLANE_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
+      - HOST=node-gpu
+      - PORT=9001
+      - NODE_TYPE=GPU
+      - HAS_GPU=true
+      - NODE_ID=node-9001
+      - NODE_SECRET=node-secret-9001
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./node:/app/node
+      - ./shared:/app/shared
+      - ./sandbox:/app/sandbox
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  node-cpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-node-cpu
+    command: python node/agent.py --port 9002 --node-type CPU
+    depends_on:
+      - control-plane
+    environment:
+      - CONTROL_PLANE_URL=http://control-plane:8000
+      - CONTROL_PLANE_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
+      - HOST=node-cpu
+      - PORT=9002
+      - NODE_TYPE=CPU
+      - HAS_GPU=false
+      - NODE_ID=node-9002
+      - NODE_SECRET=node-secret-9002
+    ports:
+      - "9002:9002"
+    volumes:
+      - ./node:/app/node
+      - ./shared:/app/shared
+      - ./sandbox:/app/sandbox
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  node-edge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-node-edge
+    command: python node/agent.py --port 9003 --node-type EDGE
+    depends_on:
+      - control-plane
+    environment:
+      - CONTROL_PLANE_URL=http://control-plane:8000
+      - CONTROL_PLANE_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
+      - HOST=node-edge
+      - PORT=9003
+      - NODE_TYPE=EDGE
+      - HAS_GPU=false
+      - NODE_ID=node-9003
+      - NODE_SECRET=node-secret-9003
+    ports:
+      - "9003:9003"
+    volumes:
+      - ./node:/app/node
+      - ./shared:/app/shared
+      - ./sandbox:/app/sandbox
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-dashboard
+    command: python dashboard/app.py
+    depends_on:
+      - control-plane
+    environment:
+      - CONTROL_PLANE_URL=http://control-plane:8000
+      - CONTROL_API_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./dashboard:/app/dashboard
+    restart: unless-stopped
+
+  # Optional v9 federation controller — enable when running multi-cluster mode.
+  federation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arsonist-federation
+    profiles:
+      - federation
+    command: uvicorn federation.controller:app --host 0.0.0.0 --port 8500
+    ports:
+      - "8500:8500"
+    environment:
+      - FEDERATION_DB_PATH=/app/data/federation.db
+      - FEDERATION_API_TOKEN=${FEDERATION_API_TOKEN:-change-fed-token}
+      - ARSONIST_FEDERATION_TOKEN=${FEDERATION_API_TOKEN:-change-fed-token}
+      - ARSONIST_FEDERATION_SECRET=${ARSONIST_FEDERATION_SECRET:-change-fed-secret}
+    volumes:
+      - ./federation:/app/federation
+      - ./global_scheduler:/app/global_scheduler
+      - ./shared:/app/shared
+      - ./data:/app/data
+    restart: unless-stopped

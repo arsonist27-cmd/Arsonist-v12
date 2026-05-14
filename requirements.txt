@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+httpx
+requests
+flask
+pydantic
+psycopg[binary,pool]
+PyJWT
+cryptography
+pysyncobj

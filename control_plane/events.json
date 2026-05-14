@@ -1,0 +1,290 @@
+[
+  {
+    "ts": 1778504438.3539453,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504439.8041751,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504439.8706386,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504443.2380257,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504443.2389696,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504443.2403324,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504443.2408078,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504443.2424257,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504443.2429185,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504977.495738,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504977.5164044,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504977.574755,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504982.422806,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504982.4232166,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504982.4246695,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504982.425482,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504982.4268224,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504982.427412,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504988.38205,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504988.5616815,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504988.601249,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504992.4304345,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504992.4310575,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778504992.4323938,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504992.4340281,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778504992.4359102,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778504992.4366002,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778505166.9452722,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778505167.0101912,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778505167.071264,
+    "level": "info",
+    "event": "node_joined",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778505432.772334,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778505432.774697,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9001"
+    }
+  },
+  {
+    "ts": 1778505433.0828242,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778505433.083531,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9002"
+    }
+  },
+  {
+    "ts": 1778505433.3675573,
+    "level": "error",
+    "event": "node_unhealthy",
+    "details": {
+      "node_id": "node-9003"
+    }
+  },
+  {
+    "ts": 1778505433.368086,
+    "level": "warning",
+    "event": "node_removed",
+    "details": {
+      "node_id": "node-9003"
+    }
+  }
+]

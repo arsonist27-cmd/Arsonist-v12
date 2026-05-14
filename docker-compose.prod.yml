@@ -1,0 +1,31 @@
+services:
+  control-plane:
+    environment:
+      - ARSONIST_API_TOKEN=${ARSONIST_API_TOKEN}
+      - ARSONIST_PROVISIONER_TOKEN=${ARSONIST_PROVISIONER_TOKEN}
+      - ARSONIST_DB_PATH=/app/data/arsonist.db
+    ports: []
+    expose:
+      - "8000"
+
+  dashboard:
+    environment:
+      - CONTROL_API_TOKEN=${ARSONIST_API_TOKEN}
+      - CONTROL_PLANE_URL=http://control-plane:8000
+    ports: []
+    expose:
+      - "7000"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: arsonist-nginx
+    depends_on:
+      - dashboard
+      - control-plane
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    restart: unless-stopped

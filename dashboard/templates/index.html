@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arsonist OS v9 Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Arsonist OS v9 Dashboard</h1>
+      <form method="post" action="/submit" class="job-form">
+        <label>Type
+          <select name="type">
+            <option value="ai">ai</option>
+            <option value="code" selected>code</option>
+            <option value="system">system</option>
+            <option value="shell">shell</option>
+          </select>
+        </label>
+        <label>Power
+          <select name="power">
+            <option value="low" selected>low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </label>
+        <label>Required Nodes <input type="number" name="required_nodes" value="1" min="1" max="5" /></label>
+        <label>GPU Required <input type="checkbox" name="gpu_required" /></label>
+        <label>Task
+          <textarea name="task" rows="5">print("hello from dashboard")</textarea>
+        </label>
+        <button type="submit">Submit Job</button>
+      </form>
+
+      <section id="federation-root" class="fed-root">
+        <h2>Federation — multi-cluster</h2>
+        <p class="muted">Set <code>ARSONIST_FEDERATION_DASHBOARD_URL</code> and token. Polls every 3s with the local cluster view.</p>
+
+        <div class="fed-section">
+          <h3>Global overview</h3>
+          <div id="fed-global-overview" class="fed-summary-row"></div>
+        </div>
+
+        <div class="fed-section">
+          <h3>Federation map</h3>
+          <div id="fed-map" class="fed-map" aria-label="cluster topology"></div>
+        </div>
+
+        <div class="fed-section">
+          <h3>Cluster status</h3>
+          <div id="fed-cluster-cards" class="fed-grid"></div>
+        </div>
+
+        <div class="fed-section">
+          <h3>Federation health</h3>
+          <div id="fed-health" class="fed-summary-row"></div>
+        </div>
+
+        <div class="fed-section fed-two-col">
+          <div>
+            <h3>Job transfers &amp; routing</h3>
+            <pre id="fed-routing" class="compact-pre">—</pre>
+          </div>
+          <div>
+            <h3>Failover events</h3>
+            <pre id="fed-failover" class="compact-pre">—</pre>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Local cluster snapshot</h2>
+        <div id="health-summary" class="summary-grid"></div>
+        <h3>Node health</h3>
+        <div id="nodes-live"></div>
+        <h3>Job states</h3>
+        <div id="jobs-live"></div>
+        <pre id="snapshot">Loading...</pre>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
