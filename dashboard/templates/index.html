@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Arsonist OS v9 Dashboard</title>
+    <title>Arsonist OS v10 Dashboard</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <main class="container">
-      <h1>Arsonist OS v9 Dashboard</h1>
+      <h1>Arsonist OS v10 Dashboard</h1>
       <form method="post" action="/submit" class="job-form">
         <label>Type
           <select name="type">
@@ -32,6 +32,36 @@
         </label>
         <button type="submit">Submit Job</button>
       </form>
+
+      <section id="mesh-root" class="fed-root">
+        <h2>Decentralized mesh (v10)</h2>
+        <p class="muted">Polls <code>/api/mesh</code> → control plane <code>/mesh_*</code>. Enable mesh on the control plane with <code>ARSONIST_MESH_ENABLED=true</code> and a public URL.</p>
+        <div class="fed-section fed-two-col">
+          <div>
+            <h3>Mesh health &amp; metrics</h3>
+            <div id="mesh-health-row" class="fed-summary-row"></div>
+            <pre id="mesh-metrics-pre" class="compact-pre">—</pre>
+          </div>
+          <div>
+            <h3>Routing sample</h3>
+            <pre id="mesh-routes-pre" class="compact-pre">—</pre>
+          </div>
+        </div>
+        <div class="fed-section">
+          <h3>Peer topology</h3>
+          <div id="mesh-topology" class="fed-map" aria-label="mesh peers"></div>
+        </div>
+        <div class="fed-section fed-two-col">
+          <div>
+            <h3>Peers</h3>
+            <pre id="mesh-peers-pre" class="compact-pre">—</pre>
+          </div>
+          <div>
+            <h3>Event stream</h3>
+            <pre id="mesh-events-pre" class="compact-pre">—</pre>
+          </div>
+        </div>
+      </section>
 
       <section id="federation-root" class="fed-root">
         <h2>Federation — multi-cluster</h2>

@@ -63,6 +63,24 @@ def _fed_get(path: str) -> Dict[str, Any]:
         return {"error": str(exc)}
 
 
+@app.get("/api/mesh")
+def mesh_view() -> Any:
+    out: Dict[str, Any] = {"control_plane": CONTROL_URL}
+    for key, path in (
+        ("mesh_health", "/mesh_health"),
+        ("mesh_metrics", "/mesh_metrics"),
+        ("mesh_routes", "/mesh_routes"),
+        ("mesh_peers", "/mesh/peers"),
+        ("mesh_events", "/mesh/events?limit=40"),
+    ):
+        try:
+            resp = requests.get(f"{CONTROL_URL}{path}", headers=_headers(), timeout=3)
+            out[key] = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {"raw": resp.text}
+        except requests.RequestException as exc:
+            out[key] = {"error": str(exc)}
+    return jsonify(out)
+
+
 @app.get("/api/cluster")
 def cluster() -> Dict[str, Any]:
     nodes = _get("/nodes")

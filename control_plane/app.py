@@ -9,7 +9,7 @@ import requests
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 
 from cluster_client.cluster_agent import maybe_start_cluster_agent
-from control_plane import federation_api
+from control_plane import federation_api, mesh_bootstrap, mesh_routes
 from control_plane.autoscaler import start_autoscaler_loop
 from control_plane.coordinator import Coordinator, build_coordinator
 from control_plane.discovery import start_discovery_task
@@ -121,6 +121,8 @@ def schedule_once() -> None:
 
 federation_api.wire_federation_routes(memory, schedule_once)
 app.include_router(federation_api.router)
+mesh_routes.wire_mesh_routes(memory, schedule_once)
+app.include_router(mesh_routes.router)
 
 
 def _provision_node(node_type: NodeType) -> None:
@@ -171,6 +173,7 @@ def startup() -> None:
     start_discovery_task(memory, COORDINATOR.is_leader)
     threading.Thread(target=_scheduler_loop, daemon=True, name="scheduler-loop").start()
     maybe_start_cluster_agent(memory)
+    mesh_bootstrap.maybe_start_mesh(memory, schedule_once)
 
 
 @app.get("/health")

@@ -1,4 +1,4 @@
-# Arsonist OS v8 - Self-Healing AI Cloud OS
+# Arsonist OS v8 / v9 / v10 - Self-Healing AI Cloud OS
 
 Arsonist OS v8 is a mini distributed AI orchestration layer inspired by Kubernetes:
 
@@ -11,6 +11,11 @@ Arsonist OS v8 is a mini distributed AI orchestration layer inspired by Kubernet
 
 ```text
 arsonist-v8/
+├── mesh/                 # v10 gossip + mesh routing + partitions + anti-entropy
+├── distributed_queue/    # v10 mesh event log + replicated queue metadata
+├── consensus/            # v10 optional raft / leases / distributed locks
+├── edge/                 # v10 edge/offline helpers
+├── observability/        # v10 mesh metrics + tracing hooks
 ├── federation/           # v9 federation controller modules (registry, routing, failover)
 ├── global_scheduler/     # v9 cross-cluster scheduler
 ├── cluster_client/       # v9 cluster ↔ federation agent
@@ -22,6 +27,8 @@ arsonist-v8/
 │   ├── health.py
 │   ├── nodes.py
 │   ├── memory.py
+│   ├── mesh_bootstrap.py
+│   ├── mesh_routes.py
 ├── node/
 │   └── agent.py
 ├── scheduler/
@@ -41,7 +48,11 @@ arsonist-v8/
 │   └── utils.py
 ├── tests/
 │   ├── integration_sim.py
-│   └── stress_test.py
+│   ├── federation_sim.py
+│   ├── stress_test.py
+│   ├── partition_sim.py
+│   ├── mesh_failover_sim.py
+│   └── gossip_stress_test.py
 ├── requirements.txt
 └── README.md
 ```
@@ -293,6 +304,58 @@ Set on the dashboard service:
 - `ARSONIST_FEDERATION_DASHBOARD_TOKEN` — same bearer as `FEDERATION_API_TOKEN`
 
 The UI adds **Global Overview / cluster cards / routing + failover** (polls every 3s with the local cluster view).
+
+### Arsonist OS v10 — decentralized mesh (optional)
+
+Enable peer gossip, mesh routing, replicated queue metadata, and mesh observability endpoints without removing federation.
+
+**Modes (orthogonal):**
+
+- **Standalone:** default — no federation env vars, `ARSONIST_MESH_ENABLED` unset.
+- **Federation:** unchanged — set `ARSONIST_FEDERATION_URL` + `ARSONIST_CLUSTER_ID` as in v9.
+- **Mesh:** set `ARSONIST_MESH_ENABLED=true` **or** `ARSONIST_ORCHESTRATION_MODE=mesh`, plus `ARSONIST_CLUSTER_ID` and `ARSONIST_CONTROL_PLANE_PUBLIC_URL`.
+
+**Key environment variables:**
+
+| Variable | Purpose |
+| --- | --- |
+| `ARSONIST_GOSSIP_INTERVAL` | Seconds between gossip rounds (default `4`) |
+| `ARSONIST_PEER_TTL` | Seconds before expiring stale peers (default `120`) |
+| `ARSONIST_GOSSIP_FANOUT` | Random peers contacted per round (default `3`) |
+| `ARSONIST_MESH_SEED_URLS` | Comma-separated control plane URLs for cold start |
+| `ARSONIST_MESH_HMAC_SECRET` | HMAC for mesh HTTP (falls back to federation secret) |
+| `ARSONIST_MESH_TRUSTED_PEERS` | Optional comma allow-list of remote `cluster_id` values |
+| `ARSONIST_CONSENSUS_MODE` | `disabled` (default), `raft`, or `leaderless` |
+| `ARSONIST_RAFT_PARTNERS` | Comma addresses for `pysyncobj` when `raft` mode is enabled |
+
+**Control plane HTTP (mesh):**
+
+- `POST /mesh/gossip` — signed peer/state exchange
+- `POST /mesh/forward_job` — async forward to best peer (`httpx`)
+- `POST /mesh/receive_routed_job` — accept routed work from a peer
+- `GET /mesh_metrics`, `GET /mesh_health`, `GET /mesh_routes` — observability
+- `GET /mesh/peers`, `GET /mesh/events`, `POST /mesh/events/merge` — registry + event log
+
+**Architecture (target shape):**
+
+```text
+        ┌──────────┐     gossip      ┌──────────┐
+        │ Cluster A│◄──────────────►│ Cluster B│
+        └────┬─────┘                 └────┬─────┘
+             │   \                     /   │
+             │    \   routed jobs    /    │
+             ▼     ▼                 ▼     ▼
+          Workers / queue replicas / edge buffers (SQLite sidecars by default)
+```
+
+**Simulations (from repo root):**
+
+```bash
+export PYTHONPATH=$PWD
+python tests/partition_sim.py
+python tests/mesh_failover_sim.py
+python tests/gossip_stress_test.py
+```
 
 ### Scaling
 

@@ -104,9 +104,68 @@ async function refreshFederation() {
   }
 }
 
+async function refreshMesh() {
+  const mhRow = document.getElementById("mesh-health-row");
+  const mmPre = document.getElementById("mesh-metrics-pre");
+  const mrPre = document.getElementById("mesh-routes-pre");
+  const mpPre = document.getElementById("mesh-peers-pre");
+  const mePre = document.getElementById("mesh-events-pre");
+  const topo = document.getElementById("mesh-topology");
+  if (!mhRow || !mmPre || !mrPre || !mpPre || !mePre || !topo) return;
+  try {
+    const res = await fetch("/api/mesh");
+    const bundle = await res.json();
+    const mh = bundle.mesh_health || {};
+    const mm = bundle.mesh_metrics || {};
+    const mr = bundle.mesh_routes || {};
+    const mp = bundle.mesh_peers || {};
+    const me = bundle.mesh_events || {};
+
+    if (!mh.mesh_enabled) {
+      mhRow.innerHTML = `<span class="muted">Mesh disabled on control plane (see README v10 section).</span>`;
+      mmPre.textContent = "—";
+      mrPre.textContent = "—";
+      mpPre.textContent = "—";
+      mePre.textContent = "—";
+      topo.innerHTML = "";
+      return;
+    }
+
+    const peers = (mp.peers || []).filter(Boolean);
+    mhRow.innerHTML = `
+      <div class="fed-stat"><span class="lbl">Peers</span><span class="val">${mh.peer_count ?? peers.length}</span></div>
+      <div class="fed-stat"><span class="lbl">Consensus</span><span class="val tiny">${escapeHtml(String(mh.consensus_mode || "—"))}</span></div>
+      <div class="fed-stat"><span class="lbl">Raft leader</span><span class="val">${mh.raft_leader ? "yes" : "no"}</span></div>
+      <div class="fed-stat"><span class="lbl">Unreachable</span><span class="val warn">${(mh.partition && mh.partition.unreachable_peers && mh.partition.unreachable_peers.length) || 0}</span></div>
+    `;
+    mmPre.textContent = JSON.stringify(mm, null, 2);
+    mrPre.textContent = JSON.stringify(mr, null, 2);
+    mpPre.textContent = JSON.stringify(mp, null, 2);
+    mePre.textContent = JSON.stringify(me, null, 2);
+
+    const localId = mh.cluster_id || "local";
+    const arms = peers
+      .map((p) => {
+        const st = (p.health || "").toLowerCase();
+        const cls = st === "offline" ? "offline" : st === "degraded" ? "degraded" : "";
+        return `<div class="fed-map-arm ${cls}">
+          <div class="fed-edge"></div>
+          <div class="fed-node" title="${escapeHtml(p.public_url || "")}">${escapeHtml(p.cluster_id || "?")}</div>
+        </div>`;
+      })
+      .join("");
+    const hub = `<div class="fed-hub" title="This control plane"><span class="hub-dot"></span><div>${escapeHtml(localId)}</div></div>`;
+    topo.innerHTML = `<div class="fed-map-inner">${hub}<div class="fed-map-arms">${arms}</div></div>`;
+  } catch (err) {
+    mhRow.innerHTML = `<div class="pill bad">Mesh fetch failed</div>`;
+    mmPre.textContent = String(err);
+  }
+}
+
 async function refresh() {
   try {
     await refreshFederation();
+    await refreshMesh();
     const res = await fetch("/api/cluster");
     const data = await res.json();
     const metrics = data.metrics || {};
