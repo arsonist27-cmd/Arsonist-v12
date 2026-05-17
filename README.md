@@ -835,3 +835,271 @@ v14 does **not** break any existing APIs or modes:
 - v13 global fabric works unchanged
 
 All v14 features are additive. The intelligence layer operates above existing infrastructure.
+
+---
+
+### Arsonist OS v15 — Planet-Scale AI Operating Fabric
+
+Extends the platform from an intelligent infrastructure layer into a **planet-scale AI operating fabric** capable of coordinating millions of workloads, planetary-scale inference, distributed AI execution, continental failover, carbon/energy optimization, and extreme simulation.
+
+v15 is the top-level orchestration fabric. It does NOT rewrite v14 — it extends upward.
+
+**Modes (additive — all prior modes still work):**
+
+- **Standalone:** unchanged.
+- **Federation:** unchanged.
+- **Mesh:** unchanged.
+- **Global Fabric:** unchanged.
+- **Intelligence:** unchanged.
+- **Planet-Scale:** set `ARSONIST_PLANETARY_MODE=enabled` to activate v15 planetary orchestration.
+
+#### New Modules
+
+```text
+fabric_core/                          # Planet-scale fabric core
+├── global_fabric_controller.py       # Top-level orchestration controller
+├── planetary_scheduler.py            # Multi-strategy global workload scheduler
+├── infrastructure_graph.py           # Graph-based infrastructure representation
+
+planetary/                            # Planetary-scale systems
+├── geo_optimizer.py                  # Geographic workload placement optimization
+├── continental_failover.py           # Continent-wide failover and disaster recovery
+├── infrastructure_zones.py           # Hierarchical zone management
+
+runtime/                              # Ultra-scale runtime
+├── ultra_scale_runtime.py            # Millions of concurrent jobs with priority queuing
+├── workload_streaming.py             # Streaming inference with backpressure handling
+├── distributed_execution.py          # Cross-region parallel execution (data/model/pipeline)
+
+coordination/                         # Distributed coordination
+├── distributed_decision_engine.py    # Decentralized decision-making with voting
+├── consensus_mesh.py                 # Consensus-assisted coordination and leader election
+├── adaptive_policies.py              # Dynamic policy adjustment based on conditions
+
+efficiency/                           # Energy and carbon optimization
+├── carbon_optimizer.py               # Carbon-aware workload placement (green/mixed/brown)
+├── energy_grid_awareness.py          # Regional energy grid monitoring and recommendations
+├── cooling_efficiency.py             # Cooling system optimization and PUE tracking
+
+simulation/                           # Extreme simulation
+├── planetary_simulation.py           # Traffic spikes, blackouts, failovers, surges, isolation
+├── extreme_load_test.py              # Massive concurrency, GPU saturation, queue overflow
+├── continent_outage_test.py          # Continental blackout, cascading failure, network partition
+
+telemetry/                            # Planetary observability
+├── planetary_metrics.py              # Worldwide traffic, continental load, carbon metrics
+├── infrastructure_intelligence.py    # Health scoring, insights, and recommendations
+
+dashboard/
+├── planetary_panel.py                # v15 planetary visualization endpoints (17 endpoints)
+```
+
+#### Architecture
+
+```text
+v15 Planet-Scale AI Operating Fabric
+│
+├── Global Fabric Controller ──── top-level control loop
+│   ├── Planetary Scheduler ───── multi-strategy workload scheduling
+│   │   ├── Strategies: latency_first, throughput_first, cost_first, carbon_first, balanced
+│   │   └── Tiers: realtime, interactive, batch, background
+│   └── Infrastructure Graph ──── graph-based optimization (Dijkstra shortest path)
+│       ├── Nodes: regions, GPU clusters, edge nodes, compute pools
+│       └── Links: backbone, edge, overlay, peering (latency + bandwidth)
+│
+├── Planetary Systems
+│   ├── Geo Optimizer ─────────── geographic placement with constraints
+│   ├── Continental Failover ──── continent-wide rerouting + disaster recovery
+│   │   └── Triggers: outage, latency_spike, capacity_exhaustion, thermal_critical
+│   └── Infrastructure Zones ──── hierarchical zone management + zone-level failover
+│
+├── Ultra-Scale Runtime
+│   ├── Runtime Engine ────────── millions of concurrent jobs (5M queue, 1M concurrent)
+│   ├── Streaming Manager ─────── streaming inference with backpressure (500K sessions)
+│   └── Distributed Execution ─── data-parallel, model-parallel, pipeline-parallel
+│
+├── Distributed Coordination
+│   ├── Decision Engine ───────── propose → vote → approve → execute decisions
+│   │   └── Types: scaling, migration, placement, repair, failover, rebalance, carbon_shift
+│   ├── Consensus Mesh ────────── quorum-based voting + leader election
+│   └── Adaptive Policies ─────── 6 default policies (scaling, routing, failover, energy, thermal, cost)
+│       └── Modes: conservative, balanced, aggressive, emergency
+│
+├── Energy & Carbon Optimization
+│   ├── Carbon Optimizer ──────── carbon-aware placement (gCO2/kWh scoring)
+│   │   └── Tiers: green (<100), mixed (100-400), brown (400-700), critical (>700)
+│   ├── Energy Grid Manager ───── grid status monitoring (normal, peak, off_peak, stressed, emergency)
+│   └── Cooling Efficiency ────── PUE tracking, thermal zones, cooling mode optimization
+│
+├── Planetary Observability
+│   ├── Metrics Collector ─────── continental breakdown, global snapshots, failover/energy logs
+│   └── Infrastructure Intel ──── health scores, insights, recommendations per region
+│
+└── Extreme Simulation
+    ├── Planetary Simulator ────── 5 scenario types (spike, blackout, failover, surge, isolation)
+    ├── Extreme Load Tester ────── concurrency, GPU saturation, queue overflow tests
+    └── Continent Outage Tester ── blackout, cascading failure, network partition tests
+```
+
+#### Planetary Scheduler
+
+Coordinates workloads globally with multi-factor scoring:
+
+- **Latency**: Client proximity and regional latency
+- **Load**: Workload saturation and queue depth
+- **GPU**: GPU availability and utilization
+- **Cost**: Regional compute cost
+- **Carbon**: Carbon intensity and renewable percentage
+- **Energy**: Renewable energy availability
+- **Thermal**: GPU thermal pressure
+- **Bandwidth**: Network bandwidth utilization
+
+Scheduling strategies: `latency_first`, `throughput_first`, `cost_first`, `carbon_first`, `balanced`.
+
+Scheduling tiers: `realtime` (latency bonus), `interactive`, `batch`, `background` (cost bonus).
+
+#### Infrastructure Graph Engine
+
+Graph-based representation of global infrastructure:
+
+- **Nodes**: Regions, GPU clusters, edge nodes, compute pools
+- **Links**: Backbone, edge, overlay, peering connections
+- **Algorithms**: Dijkstra shortest path, hotspot detection, congestion analysis
+- **Telemetry integration**: Auto-build graph from region telemetry data
+
+#### Continental Failover
+
+Continent-wide failure detection and rerouting:
+
+- **Detection triggers**: Outage (>50% offline), latency spike (>500ms), thermal critical (>90%)
+- **Isolation**: Affected continent marked for isolation
+- **Rerouting**: Workloads redistributed to healthy continents
+- **Recovery**: Automatic recovery tracking with timing metrics
+
+#### Distributed Decision Engine
+
+Decentralized infrastructure decision-making:
+
+1. **Propose**: Analyze telemetry for scaling, migration, repair, carbon-shift needs
+2. **Vote**: Quorum-based voting (configurable quorum size)
+3. **Approve**: Decisions approved when votes reach quorum
+4. **Execute**: Approved decisions executed with completion tracking
+
+Auto-propose from telemetry: saturation >90% → scale, thermal >85% → migrate, degraded → repair, carbon >0.7 → carbon-shift.
+
+#### Carbon + Energy Optimization
+
+Carbon-aware workload placement:
+
+- **Carbon tiers**: Green (<100 gCO2/kWh), Mixed (100-400), Brown (400-700), Critical (>700)
+- **Scoring factors**: Carbon intensity (35%), renewable % (25%), cost (15%), PUE (10%), capacity (15%)
+- **CO2 tracking**: Estimated CO2 per workload, total CO2 saved
+
+Energy grid awareness:
+
+- **Grid statuses**: Normal, peak, off-peak, stressed, emergency
+- **Recommendations**: Reduce load (emergency), increase load (off-peak + renewable), shift workloads (high cost)
+
+Cooling efficiency:
+
+- **Thermal zones**: Optimal, warm, hot, critical
+- **Cooling modes**: Free cooling, hybrid, mechanical, liquid, immersion
+- **PUE tracking**: Per-region Power Usage Effectiveness monitoring
+
+#### Ultra-Scale Runtime
+
+Planet-scale job execution:
+
+- **Capacity**: 1M concurrent jobs, 5M queue depth
+- **Priority queuing**: Critical → high → normal → low → background
+- **Streaming inference**: 500K concurrent streaming sessions with backpressure handling
+- **Distributed execution**: Data-parallel, model-parallel, pipeline-parallel, hybrid modes
+- **Token tracking**: Per-job and aggregate token generation metrics
+
+#### Adaptive Global Policies
+
+6 default policies that dynamically adjust:
+
+| Policy | Thresholds | Actions |
+|--------|-----------|---------|
+| `scaling-auto` | scale_up: 80%, scale_down: 30% | scale_up, scale_down, rebalance |
+| `routing-latency` | max: 200ms, reroute: 400ms, failover: 800ms | reroute, failover, degrade |
+| `failover-auto` | health: 50%, offline: 50% | isolate, reroute, recover |
+| `energy-green` | max_carbon: 0.6, min_renewable: 30% | shift_to_green, throttle_brown |
+| `thermal-safety` | warning: 75°C, critical: 85°C | throttle, migrate, shutdown |
+| `cost-optimize` | max_cost: $150/hr, idle_timeout: 300s | use_spot, consolidate, terminate_idle |
+
+Policy modes: `conservative`, `balanced`, `aggressive`, `emergency` (auto-adjusted based on conditions).
+
+#### Planetary Observability
+
+Global metrics collection:
+
+- **Continental breakdown**: Per-continent GPU count, workloads, latency, utilization, carbon
+- **Global snapshots**: Aggregate planetary metrics with history
+- **Health scores**: Per-region health (performance, reliability, efficiency, thermal, carbon)
+- **Infrastructure insights**: Capacity warnings, thermal alerts, carbon opportunities, latency issues
+
+#### Dashboard (v15 planetary views)
+
+The dashboard exposes planetary visualization endpoints under `/api/v15/planetary/`:
+
+- `overview` — Fabric status, planetary metrics, scheduler, graph, carbon summary
+- `topology` — Graph summary, hottest/most utilized nodes, congested links
+- `continental` — Continental breakdown, failover events, zone summary
+- `scheduler` — Scheduler metrics, recent decisions and events
+- `runtime` — Runtime metrics, queue stats, streaming, execution
+- `coordination` — Decision metrics, pending proposals, consensus, policies
+- `carbon` — Carbon summary, greenest/brownest regions, placements
+- `energy` — Grid summary, recommendations, best batch regions
+- `cooling` — Cooling summary, hottest/coolest regions, recommendations
+- `intelligence` — Global health, scores, insights, critical alerts
+- `failover` — Failover metrics, active/recent events, log
+- `simulation` — Simulation metrics, results, resilience summary
+- `load_tests` — Load test metrics and results
+- `outage_tests` — Outage test metrics, results, pass rate
+- `policies` — All policies, evaluations, metrics
+- `geo` — Geo optimization metrics and placements
+
+#### Extreme Simulation
+
+```bash
+export PYTHONPATH=$PWD
+
+# Planetary simulation (traffic spikes, blackouts, failovers, surges, isolation)
+# Uses PlanetarySimulator with 5 scenario types
+
+# Extreme load tests (massive concurrency, GPU saturation, queue overflow)
+# Uses ExtremeLoadTester with configurable parameters
+
+# Continent outage tests (blackout, cascading failure, network partition)
+# Uses ContinentOutageTester with per-continent and multi-continent scenarios
+```
+
+#### Performance Requirements
+
+- Planetary routing: **<250ms**
+- Autonomous failover: **<seconds**
+- Distributed coordination: **async**
+- Graph computation: **scalable**
+
+#### Security
+
+- Zero-trust infrastructure support
+- Signed coordination events
+- Encrypted overlay mesh
+- Distributed identity verification
+
+#### Backward Compatibility
+
+v15 does **not** break any existing APIs or modes:
+
+- v8 standalone clusters work unchanged
+- v9 federation mode works unchanged
+- v10 mesh mode works unchanged
+- v11 AI orchestration works unchanged
+- v12 multi-tenant cloud works unchanged
+- v13 global fabric works unchanged
+- v14 intelligence layer works unchanged
+
+All v15 features are additive. The planet-scale operating fabric operates above all existing layers.
