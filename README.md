@@ -579,3 +579,259 @@ v13 does **not** break any existing APIs or modes:
 - v12 multi-tenant cloud works unchanged
 
 All v13 features are additive and activated via new configuration.
+
+---
+
+### Arsonist OS v14 — Autonomous Infrastructure Intelligence Layer
+
+Extends the platform from a globally distributed fabric into a **self-optimizing, autonomous infrastructure intelligence layer** with predictive scaling, anomaly detection, autonomous healing, intelligent workload migration, thermal/energy optimization, cost-aware orchestration, and learning-based optimization.
+
+v14 is an intelligence layer **above** infrastructure. It does NOT rewrite v13 — it extends upward.
+
+**Modes (additive — all prior modes still work):**
+
+- **Standalone:** unchanged.
+- **Federation:** unchanged.
+- **Mesh:** unchanged.
+- **Global Fabric:** unchanged.
+- **Intelligence:** set `ARSONIST_INTELLIGENCE_MODE=enabled` to activate v14 autonomous optimization loops.
+
+#### New Modules
+
+```text
+intelligence/                  # Infrastructure intelligence engine
+├── optimization_engine.py     # Continuous telemetry analysis and inefficiency detection
+├── anomaly_detector.py        # Statistical anomaly detection with scoring and alerts
+├── prediction_engine.py       # Exponential smoothing prediction for infrastructure metrics
+├── recommendation_engine.py   # Actionable recommendations from inefficiencies and predictions
+├── workload_analyzer.py       # Workload profiling (GPU, CPU, latency, error rate)
+
+prediction/                    # Predictive scaling and forecasting
+├── traffic_forecasting.py     # Traffic prediction with trend analysis per region
+├── scaling_forecast.py        # Resource scaling forecasts with pre-scaling and warm standby
+├── gpu_demand_predictor.py    # GPU demand/supply forecasting with deficit detection
+
+repair/                        # Autonomous healing and recovery
+├── auto_healing.py            # Automated failure detection and healing actions
+├── failure_recovery.py        # Failure recording, strategy selection, retry, escalation
+├── workload_rebuilder.py      # Failed workload re-deployment with state preservation
+├── deployment_repair.py       # Deployment repair strategies (redeploy, rollback, config-fix)
+
+optimization/                  # Infrastructure optimization
+├── gpu_optimizer.py           # GPU utilization balancing (consolidate, offload, rebalance)
+├── thermal_balancer.py        # GPU thermal monitoring, hotspot detection, workload migration
+├── cost_optimizer.py          # Global cost analysis and optimization across regions
+├── energy_scheduler.py        # Green energy scheduling and carbon-aware placement
+
+adaptation/                    # Adaptive infrastructure
+├── dynamic_routing.py         # Multi-factor workload migration (latency, thermal, cost, GPU)
+├── adaptive_scaling.py        # Real-time adaptive autoscaling with cooldown periods
+├── topology_optimizer.py      # Network topology optimization and latency reduction
+
+learning/                      # Learning-based optimization
+├── telemetry_learning.py      # Continuous pattern discovery from telemetry data
+├── workload_patterns.py       # Workload execution profiling and resource prediction
+├── historical_optimizer.py    # Historical trend analysis and long-term optimization
+
+dashboard/
+├── intelligence_panel.py      # v14 intelligence visualization endpoints
+
+tests/
+├── autonomous_healing_test.py # Autonomous healing test suite (8 tests)
+├── scaling_prediction_test.py # Scaling prediction test suite (7 tests)
+├── optimization_sim.py        # Full v14 optimization simulation (4 regions, 5 rounds)
+```
+
+#### Architecture
+
+```text
+v14 Intelligence Layer
+├── Optimization Engine ──── continuous telemetry analysis loop
+├── Anomaly Detector ─────── real-time anomaly scoring
+├── Prediction Engine ────── metric forecasting (exponential smoothing)
+├── Recommendation Engine ── actionable optimization suggestions
+│
+├── Traffic Forecaster ───── RPS prediction per region
+├── Scaling Forecaster ───── GPU/bandwidth/edge pre-scaling
+├── GPU Demand Predictor ─── supply/demand gap analysis
+│
+├── Auto Healing System ──── failure detection → heal → rollback
+├── Failure Recovery ─────── strategy selection → retry → escalate
+├── Workload Rebuilder ───── re-deploy to healthy regions
+├── Deployment Repair ────── redeploy / rollback / config-fix
+│
+├── GPU Optimizer ────────── consolidation + load balancing
+├── Thermal Balancer ─────── temperature monitoring + migration
+├── Cost Optimizer ───────── cross-region cost reduction
+├── Energy Scheduler ─────── green energy preference
+│
+├── Dynamic Router ───────── intelligent workload migration
+├── Adaptive Scaler ──────── real-time scaling with cooldown
+├── Topology Optimizer ───── latency matrix optimization
+│
+├── Telemetry Learner ────── pattern discovery from metrics
+├── Workload Patterns ────── execution profile learning
+├── Historical Optimizer ─── long-term trend recommendations
+│
+└── Placement Engine (v14) ── extended with power, thermal, historical, predicted factors
+```
+
+#### Self-Optimizing Placement Engine
+
+The v13 placement engine is extended with v14 intelligence factors:
+
+- **Power efficiency**: Prefer regions with higher renewable energy percentage
+- **Thermal pressure**: Avoid thermally stressed regions
+- **Historical success**: Prefer regions with higher workload success rates
+- **Predicted saturation**: Avoid regions predicted to become saturated
+
+New `PlacementRequest` fields: `power_efficiency_weight`, `thermal_weight`, `historical_success_weight`, `predicted_traffic_weight`.
+
+Intelligence context is injected via `set_intelligence_context()` with per-region data (renewable_pct, thermal_pressure, historical_success_rate, predicted_saturation).
+
+#### Optimization Engine
+
+Continuously analyzes telemetry to identify inefficiencies:
+- **High latency** regions (>200ms average)
+- **GPU underutilization** (<30%) or overutilization (>90%)
+- **Capacity imbalance** across regions
+- **Bandwidth congestion** (>80% utilization)
+
+Optimization loop target: **under 5 seconds**.
+
+#### Anomaly Detection
+
+Statistical deviation-based anomaly detection:
+- Abnormal inference latency (>500ms threshold)
+- GPU temperature degradation (>85°C)
+- Memory growth anomalies (>15% above baseline)
+- Replication lag (>30s)
+- Suspicious traffic spikes
+- Node instability patterns
+
+Each anomaly receives a severity score (0.0–1.0) and remediation recommendation.
+
+#### Predictive Autoscaling
+
+Forecasting uses exponential smoothing with trend analysis:
+- **Traffic forecasting**: RPS prediction per region with trend detection
+- **Scaling forecast**: GPU, bandwidth, and edge saturation prediction
+- **GPU demand**: Supply/demand gap analysis with deficit alerts
+
+Pre-scaling triggers warm standby allocation before demand spikes.
+
+Default prediction horizon: **15–30 minutes**.
+
+#### Autonomous Healing
+
+Automated failure detection and recovery:
+1. **Detect**: Scan deployments, nodes, services, replicas, regions for failures
+2. **Prioritize**: Critical → high → medium → low
+3. **Heal**: Execute repair action (restart, replace, reroute, rebuild, restore, isolate)
+4. **Verify**: Confirm recovery or rollback
+
+Healing target: **under 30 seconds** from detection to recovery.
+
+Recovery strategies: `restart`, `failover`, `rebuild`, `rollback`, `escalate`.
+
+#### Intelligent Workload Migration
+
+Multi-factor migration scoring:
+- Latency degradation
+- GPU saturation
+- Thermal pressure
+- Bandwidth congestion
+- Energy efficiency
+- Cost optimization
+- Predictive (pre-migration)
+
+Supports graceful workload draining with configurable drain timeout.
+
+#### Thermal & Energy Optimization
+
+GPU thermal zones: `safe` (<70°C), `warm` (70–80°C), `hot` (80–90°C), `critical` (>90°C).
+
+Actions: throttle workloads, migrate away from hotspots, power cap GPUs.
+
+Energy scheduling prefers regions with:
+- Higher renewable energy percentage
+- Lower carbon intensity
+- Better PUE (Power Usage Effectiveness)
+
+#### Cost Optimization
+
+Analyzes costs across categories:
+- GPU compute costs
+- Bandwidth costs
+- Energy costs
+- Idle waste
+- Replication overhead
+- Storage costs
+
+Recommends: spot routing, low-priority queues, regional cost-aware scheduling.
+
+#### Learning-Based Optimization
+
+Continuously learns from:
+- Workload patterns (duration, GPU usage, success rate)
+- Traffic behavior (RPS trends, peak hours)
+- Scaling history (scaling effectiveness)
+- Deployment success rates
+- Routing efficiency
+
+Produces actionable insights to improve scheduling, failover, and replication decisions.
+
+#### Dashboard (v14 intelligence views)
+
+The dashboard exposes intelligence visualization endpoints under `/api/v14/intelligence/`:
+
+- `overview` — Optimization, anomaly, prediction, healing, cost metrics
+- `anomalies` — Anomaly list and heatmap
+- `predictions` — Scaling, traffic, and GPU demand forecasts
+- `health` — Global and regional health scoring
+- `thermal` — GPU thermal map and hotspots
+- `cost` — Cost map and cheapest regions
+- `energy` — Energy map and green regions
+- `optimization` — Actions, inefficiencies, recommendations
+- `healing` — Active/recent healing actions and repair timeline
+- `repair` — Deployment repairs, workload rebuilds, failure recoveries
+- `migration` — Active/recent workload migrations
+- `scaling` — Scale actions and metrics
+- `topology` — Latency matrix and topology actions
+- `learning` — Patterns, insights, workload patterns, historical analysis
+- `gpu` — GPU optimization actions and metrics
+
+#### v14 Simulations
+
+```bash
+export PYTHONPATH=$PWD
+
+# Autonomous healing tests (8 tests: detection, execution, rollback, recovery, escalation, rebuild, repair, priority)
+python tests/autonomous_healing_test.py
+
+# Scaling prediction tests (7 tests: traffic forecast, trend, scale up/down, GPU demand, prediction engine, warm standby)
+python tests/scaling_prediction_test.py
+
+# Full optimization simulation (4 regions, 5 rounds, all v14 subsystems)
+python tests/optimization_sim.py
+```
+
+#### Performance Requirements
+
+- Optimization loop: **<5 seconds**
+- Anomaly detection: **near real-time**
+- Predictive scaling: **async**
+- Autonomous healing: **<30 seconds**
+
+#### Backward Compatibility
+
+v14 does **not** break any existing APIs or modes:
+
+- v8 standalone clusters work unchanged
+- v9 federation mode works unchanged
+- v10 mesh mode works unchanged
+- v11 AI orchestration works unchanged
+- v12 multi-tenant cloud works unchanged
+- v13 global fabric works unchanged
+
+All v14 features are additive. The intelligence layer operates above existing infrastructure.
