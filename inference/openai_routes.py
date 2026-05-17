@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from inference.ollama_backend import OllamaBackend
 from inference.tokenizer_pool import TokenizerPool
 from security.inference_auth import require_inference_auth
+from gateway.usage_meter import maybe_record_v12_chat, maybe_record_v12_embed, maybe_record_v12_generate
 from telemetry.inference_metrics import InferenceMetrics
 
 router = APIRouter(prefix="/v1", tags=["openai-v1"])
@@ -30,6 +31,7 @@ def get_tokenizer_pool(request: Request) -> TokenizerPool:
 
 @router.post("/chat/completions")
 async def chat_completions(
+    request: Request,
     payload: Dict[str, Any],
     _: None = Depends(require_inference_auth),
     backend: OllamaBackend = Depends(get_backend),
@@ -54,6 +56,7 @@ async def chat_completions(
     metrics.record_chat(model=model, latency_ms=dt_ms, tokens_out=len(str(data.get("message", {}).get("content", ""))) // 4)
     # OpenAI-ish shape
     content = str(data.get("message", {}).get("content", ""))
+    maybe_record_v12_chat(request, model, dt_ms, content)
     return JSONResponse(
         {
             "id": f"chatcmpl-{uuid.uuid4()}",
@@ -67,6 +70,7 @@ async def chat_completions(
 
 @router.post("/embeddings")
 async def embeddings(
+    request: Request,
     payload: Dict[str, Any],
     _: None = Depends(require_inference_auth),
     backend: OllamaBackend = Depends(get_backend),
@@ -85,6 +89,7 @@ async def embeddings(
     dt_ms = (time.perf_counter() - t0) * 1000.0
     emb = data.get("embedding") or []
     metrics.record_embedding(model=model, latency_ms=dt_ms, dim=len(emb))
+    maybe_record_v12_embed(request, model, dt_ms, len(emb))
     return JSONResponse(
         {
             "object": "list",
@@ -96,6 +101,7 @@ async def embeddings(
 
 @router.post("/generate")
 async def generate(
+    request: Request,
     payload: Dict[str, Any],
     _: None = Depends(require_inference_auth),
     backend: OllamaBackend = Depends(get_backend),
@@ -110,4 +116,5 @@ async def generate(
     dt_ms = (time.perf_counter() - t0) * 1000.0
     text = str(data.get("response", ""))
     metrics.record_generate(model=model, latency_ms=dt_ms, tokens_out=len(text) // 4)
+    maybe_record_v12_generate(request, model, dt_ms, text)
     return JSONResponse({"model": model, "response": text})

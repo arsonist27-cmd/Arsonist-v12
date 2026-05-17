@@ -95,6 +95,9 @@ def v11_view() -> Any:
         except requests.RequestException as exc:
             out[key] = {"error": str(exc)}
     return jsonify(out)
+
+
+@app.get("/api/cluster")
 def cluster() -> Dict[str, Any]:
     nodes = _get("/nodes")
     jobs = _get("/jobs")
@@ -104,7 +107,29 @@ def cluster() -> Dict[str, Any]:
     return jsonify({"nodes": nodes, "jobs": jobs, "health": health, "metrics": metrics, "status": status})
 
 
-@app.post("/submit")
+def _register_v12_dashboard() -> None:
+    import importlib.util
+    from pathlib import Path
+
+    base = Path(__file__).resolve().parent
+
+    def _load(mod_name: str, fname: str):
+        spec = importlib.util.spec_from_file_location(mod_name, base / fname)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"cannot load {fname}")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    admin_panel = _load("v12_admin_panel", "admin_panel.py")
+    org_panel = _load("v12_org_panel", "org_panel.py")
+    billing_ui = _load("v12_billing_ui", "billing_ui.py")
+    admin_panel.register(app, CONTROL_URL, _headers())
+    org_panel.register(app, CONTROL_URL, _headers())
+    billing_ui.register(app, CONTROL_URL, _headers())
+
+
+_register_v12_dashboard()
 def submit() -> Any:
     payload = {
         "type": request.form.get("type", "code"),

@@ -8,3 +8,4 @@ psycopg[binary,pool]
 PyJWT
 cryptography
 pysyncobj
+redis>=5.0.0

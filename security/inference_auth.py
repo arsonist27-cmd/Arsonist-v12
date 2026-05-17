@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import os
-import time
-from typing import Optional
 
 import jwt
-from fastapi import Header, HTTPException
+from fastapi import Header, HTTPException, Request
 
 from security.jwt_auth import DEFAULT_ALGORITHM
 
@@ -25,12 +23,26 @@ def _verify_jwt_inference(token: str) -> bool:
     return scope in ("arsonist-inference", "arsonist-node", "arsonist-admin")
 
 
-def require_inference_auth(authorization: str | None = Header(default=None)) -> None:
+def require_inference_auth(
+    request: Request,
+    authorization: str | None = Header(default=None),
+) -> None:
     """
     Accepts:
     - Bearer ARSONIST_API_TOKEN or ARSONIST_INFERENCE_API_TOKEN
     - Bearer JWT with scope arsonist-inference (or node/admin for same cluster ops)
+    When v12 multi-tenant mode is on, /v1 is authenticated by gateway middleware (JWT/sk_);
+    legacy static tokens remain available if ARSONIST_V12_ALLOW_LEGACY_INFERENCE is true.
     """
+    from gateway.api_gateway import v12_enabled
+
+    if v12_enabled():
+        if getattr(request.state, "v12_tenant", None) is not None:
+            return
+        if getattr(request.state, "v12_legacy_inference_ok", False):
+            return
+        raise HTTPException(status_code=401, detail="v12 gateway authentication required")
+
     if not API_TOKEN and not INFERENCE_TOKEN and not JWT_SECRET:
         return
     if not authorization or not authorization.startswith("Bearer "):

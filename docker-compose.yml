@@ -12,13 +12,35 @@ services:
       - ARSONIST_API_TOKEN=${ARSONIST_API_TOKEN:-change-me-token}
       - ARSONIST_PROVISIONER_URL=http://provisioner:8100/provision
       - ARSONIST_PROVISIONER_TOKEN=${ARSONIST_PROVISIONER_TOKEN:-change-me-provisioner-token}
+      # v12 (optional): set ARSONIST_V12_MULTITENANT=1 and ARSONIST_JWT_SECRET in .env
+      - ARSONIST_V12_MULTITENANT=${ARSONIST_V12_MULTITENANT:-}
+      - ARSONIST_JWT_SECRET=${ARSONIST_JWT_SECRET:-}
+      - ARSONIST_V12_BOOTSTRAP_TOKEN=${ARSONIST_V12_BOOTSTRAP_TOKEN:-}
+      - ARSONIST_REDIS_URL=${ARSONIST_REDIS_URL:-}
     volumes:
       - ./control_plane:/app/control_plane
       - ./shared:/app/shared
       - ./sandbox:/app/sandbox
+      - ./gateway:/app/gateway
+      - ./identity:/app/identity
+      - ./billing:/app/billing
+      - ./tenancy:/app/tenancy
+      - ./audit:/app/audit
+      - ./notifications:/app/notifications
+      - ./deployments:/app/deployments
+      - ./inference:/app/inference
+      - ./security:/app/security
       - ./data:/app/data
     depends_on:
       - provisioner
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: arsonist-redis
+    ports:
+      - "6379:6379"
     restart: unless-stopped
 
   provisioner:

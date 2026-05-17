@@ -10,6 +10,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 
 from cluster_client.cluster_agent import maybe_start_cluster_agent
 from control_plane import federation_api, mesh_bootstrap, mesh_routes, v11_api
+from gateway.api_gateway import attach_v12_gateway
 from control_plane.autoscaler import start_autoscaler_loop
 from control_plane.coordinator import Coordinator, build_coordinator
 from control_plane.discovery import start_discovery_task
@@ -124,6 +125,7 @@ app.include_router(federation_api.router)
 mesh_routes.wire_mesh_routes(memory, schedule_once)
 app.include_router(mesh_routes.router)
 v11_api.attach_v11(app, require_token)
+attach_v12_gateway(app, require_token)
 
 
 def _provision_node(node_type: NodeType) -> None:
