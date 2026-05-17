@@ -22,6 +22,10 @@ class PlacementRequest(BaseModel):
     cost_weight: float = 0.3
     performance_weight: float = 0.5
     efficiency_weight: float = 0.2
+    power_efficiency_weight: float = 0.0
+    thermal_weight: float = 0.0
+    historical_success_weight: float = 0.0
+    predicted_traffic_weight: float = 0.0
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -46,12 +50,17 @@ class PlacementEngine:
         self,
         registry: RegionRegistry,
         capacity_tracker: RegionalCapacityTracker,
+        intelligence_context: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.registry = registry
         self.capacity = capacity_tracker
+        self._intelligence = intelligence_context or {}
         self._lock = threading.Lock()
         self._decisions: List[PlacementDecision] = []
         self._total_placed = 0
+
+    def set_intelligence_context(self, ctx: Dict[str, Any]) -> None:
+        self._intelligence = ctx
 
     def place(self, request: PlacementRequest) -> Optional[PlacementDecision]:
         start = now_ts()
@@ -130,6 +139,33 @@ class PlacementEngine:
         if region.status == RegionStatus.degraded:
             score *= 0.7
 
+        power_score = 0.5
+        thermal_score = 0.5
+        historical_score = 0.5
+        predicted_score = 0.5
+
+        intel = self._intelligence.get(region.region_id, {})
+        if intel:
+            renewable = intel.get("renewable_pct", 0.0)
+            power_score = 0.3 + renewable * 0.7
+
+            thermal_p = intel.get("thermal_pressure", 0.0)
+            thermal_score = max(0.0, 1.0 - thermal_p)
+
+            historical_score = intel.get("historical_success_rate", 0.5)
+
+            predicted_sat = intel.get("predicted_saturation", 0.0)
+            predicted_score = max(0.0, 1.0 - predicted_sat)
+
+        if request.power_efficiency_weight > 0:
+            score += request.power_efficiency_weight * power_score
+        if request.thermal_weight > 0:
+            score += request.thermal_weight * thermal_score
+        if request.historical_success_weight > 0:
+            score += request.historical_success_weight * historical_score
+        if request.predicted_traffic_weight > 0:
+            score += request.predicted_traffic_weight * predicted_score
+
         factors = {
             "gpu": round(gpu_score, 3),
             "load": round(load_score, 3),
@@ -139,6 +175,10 @@ class PlacementEngine:
             "cost": round(cost_factor, 3),
             "performance": round(perf_factor, 3),
             "efficiency": round(efficiency_factor, 3),
+            "power": round(power_score, 3),
+            "thermal": round(thermal_score, 3),
+            "historical": round(historical_score, 3),
+            "predicted": round(predicted_score, 3),
         }
         return score, factors
 

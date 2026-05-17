@@ -125,10 +125,12 @@ def _register_v12_dashboard() -> None:
     org_panel = _load("v12_org_panel", "org_panel.py")
     billing_ui = _load("v12_billing_ui", "billing_ui.py")
     fabric_panel = _load("v13_fabric_panel", "fabric_panel.py")
+    intelligence_panel = _load("v14_intelligence_panel", "intelligence_panel.py")
     admin_panel.register(app, CONTROL_URL, _headers())
     org_panel.register(app, CONTROL_URL, _headers())
     billing_ui.register(app, CONTROL_URL, _headers())
     fabric_panel.register(app, CONTROL_URL, _headers())
+    intelligence_panel.register(app, CONTROL_URL, _headers())
 
 
 _register_v12_dashboard()
