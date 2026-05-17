@@ -409,3 +409,173 @@ python tests/deployment_sim.py
 - **Horizontal:** Add clusters with new `ARSONIST_CLUSTER_ID`; they self-register and enter the global scheduler pool.
 - **Load:** Global queue and metrics live in `FEDERATION_DB_PATH` (SQLite by default). For very high throughput, point a future registry at PostgreSQL (same pattern as `ARSONIST_DATABASE_URL` for the control plane).
 - **Scheduler budget:** Cross-cluster decisions are designed to stay under 500ms (in-process scoring only; network push is async and timed out separately).
+
+---
+
+### Arsonist OS v13 — Global AI Compute Fabric
+
+Extends the platform from a hosted AI cloud into a **globally distributed AI compute fabric** with multi-region orchestration, global inference routing, edge + cloud execution, worldwide workload placement, and active-active regional infrastructure.
+
+**Modes (additive — all prior modes still work):**
+
+- **Standalone:** unchanged.
+- **Federation:** unchanged.
+- **Mesh:** unchanged.
+- **Global Fabric:** set `ARSONIST_FABRIC_MODE=global` to enable v13 global region management, routing, replication, and failover.
+
+#### New Modules
+
+```text
+regions/                  # Global region management
+├── region_registry.py    # Region registration, heartbeat, status tracking
+├── region_health.py      # Regional health monitoring with heartbeat timeout
+├── geo_routing.py        # Geographic routing (nearest-region, geo-fenced)
+├── regional_capacity.py  # Per-region capacity tracking and saturation
+├── latency_map.py        # Inter-region and client latency measurement
+
+global_control/           # Global control plane extensions
+├── global_control_plane.py  # Top-level global orchestration coordinator
+├── consensus.py          # Lightweight leader election / consensus
+├── replication.py        # Incremental state replication with conflict resolution
+├── global_state.py       # Global state store (SQLite-backed)
+
+routing/                  # Global latency-aware routing
+├── global_router.py      # Multi-factor inference routing (latency, load, GPU, queue)
+├── latency_router.py     # Pure latency-based routing
+├── smart_failover.py     # Automatic regional failover with transparent rerouting
+├── request_affinity.py   # Session/model/client affinity for request stickiness
+
+replication/              # Distributed replication
+├── model_replication.py  # Automatic model replication across regions (hot/warm/cold)
+├── state_replication.py  # Incremental state replication with checkpointing
+├── cache_replication.py  # Distributed cache with regional invalidation and warming
+
+fabric/                   # Global compute fabric
+├── compute_fabric.py     # Top-level abstraction over global compute mesh
+├── placement_engine.py   # Multi-factor workload placement (GPU, latency, cost)
+├── topology_manager.py   # Global topology graph with shortest-path routing
+
+edge/                     # Edge AI extensions
+├── edge_runtime.py       # Lightweight edge inference with offline support
+├── edge_scheduler.py     # Edge workload scheduling with priority queuing
+├── edge_cache.py         # Local LRU inference cache for edge nodes
+
+networking/               # Overlay network layer
+├── overlay_network.py    # Encrypted inter-region overlay with service discovery
+├── encrypted_transport.py  # Mutual auth and encrypted transport (mTLS-ready)
+├── bandwidth_optimizer.py  # Bandwidth-aware routing and transfer scheduling
+
+telemetry/                # Global observability extensions
+├── global_metrics.py     # Fabric-wide metrics (request flow, latency, replication)
+├── regional_metrics.py   # Per-region metrics collection and aggregation
+├── routing_metrics.py    # Routing decision and failover metrics
+
+dashboard/
+├── fabric_panel.py       # v13 fabric visualization endpoints
+
+tests/
+├── multi_region_sim.py        # Full multi-region simulation
+├── regional_failover_test.py  # Failover scenario tests
+├── edge_disconnect_test.py    # Edge disconnect/reconnect tests
+```
+
+#### Key Environment Variables
+
+| Variable | Purpose |
+| --- | --- |
+| `ARSONIST_FABRIC_MODE` | `global` to enable v13 fabric features |
+| `ARSONIST_REGION_DB_PATH` | Region registry SQLite path (default `data/regions.db`) |
+| `ARSONIST_REPLICATION_DB` | Model replication SQLite path (default `data/model_replication.db`) |
+| `ARSONIST_EDGE_RUNTIME_DB` | Edge runtime SQLite path (per-node) |
+| `ARSONIST_GLOBAL_STATE_DB` | Global state SQLite path (default `data/global_state.db`) |
+
+#### Global Routing
+
+Inference requests are routed based on multi-factor scoring:
+
+- **Client latency** (30%): Prefer regions closest to the client
+- **Regional load** (25%): Avoid saturated regions
+- **GPU availability** (20%): Prefer regions with available GPU/VRAM
+- **Queue depth** (15%): Avoid regions with deep queues
+- **Bandwidth** (10%): Prefer high-bandwidth paths
+
+Supported strategies: `nearest`, `weighted`, `least_loaded`, `gpu_affinity`, `round_robin`.
+
+#### Active-Active Failover
+
+Automatic failover triggers on:
+- Latency spikes (>1000ms threshold)
+- Region outages (offline status)
+- GPU exhaustion (>95% saturation)
+- Network partitions
+- Deployment failures
+
+Failover transparently reroutes requests to the next-best region with workload migration and traffic draining.
+
+#### Edge AI Execution
+
+Edge nodes support:
+- Intermittent connectivity with offline operation
+- Local inference caching (LRU eviction)
+- Outbox-based synchronization on reconnect
+- Priority-based edge workload scheduling
+
+#### Model Replication
+
+Models replicate automatically across regions with three tiers:
+- **Hot:** High-frequency models, always ready
+- **Warm:** Medium-frequency, loaded on demand
+- **Cold:** Archived, restored when needed
+
+#### Overlay Network
+
+Encrypted inter-region communication with:
+- Service discovery and connection pooling
+- Mutual authentication and request signing
+- Bandwidth-aware routing and transfer optimization
+- Support for TCP, QUIC, and WireGuard transport
+
+#### Dashboard (v13 fabric views)
+
+The dashboard exposes fabric visualization endpoints under `/api/v13/fabric/`:
+
+- `overview` — Global metrics summary
+- `regions` / `regions/<id>` — Region details
+- `topology` — Network topology graph
+- `routing` — Routing decisions and metrics
+- `replication` — Model replication status
+- `edge` — Edge node health
+- `failover` — Failover events and metrics
+- `latency_map` — Cross-region latency matrix
+- `gpu_utilization` — Per-region GPU usage
+- `cache` — Distributed cache metrics
+- `network` — Overlay network and bandwidth
+- `workloads` — Active workload placement
+- `world_map` — Combined view for map visualization
+
+#### v13 Simulations
+
+```bash
+export PYTHONPATH=$PWD
+
+# Full multi-region simulation (routing, replication, placement, outage, failover, cache, partition)
+python tests/multi_region_sim.py
+
+# Regional failover tests (basic, recovery, latency spike, GPU exhaustion, cascading, migration)
+python tests/regional_failover_test.py
+
+# Edge disconnect tests (online, offline, reconnect, scheduler failure, cache eviction)
+python tests/edge_disconnect_test.py
+```
+
+#### Backward Compatibility
+
+v13 does **not** break any existing APIs or modes:
+
+- v8 standalone clusters work unchanged
+- v9 federation mode works unchanged
+- v10 mesh mode works unchanged
+- v11 AI orchestration works unchanged
+- v12 multi-tenant cloud works unchanged
+
+All v13 features are additive and activated via new configuration.
