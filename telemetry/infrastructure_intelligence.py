@@ -162,11 +162,10 @@ class InfrastructureIntelligence:
                     ts=ts,
                 ))
 
-        scores = list(self._health_scores.values())
-        if scores:
-            self._global_health = round(sum(s.overall for s in scores) / len(scores), 3)
-
         with self._lock:
+            scores = list(self._health_scores.values())
+            if scores:
+                self._global_health = round(sum(s.overall for s in scores) / len(scores), 3)
             self._insights.extend(insights)
             if len(self._insights) > self._max_history:
                 self._insights = self._insights[-self._max_history:]
@@ -203,7 +202,8 @@ class InfrastructureIntelligence:
         )
 
     def global_health(self) -> float:
-        return self._global_health
+        with self._lock:
+            return self._global_health
 
     def health_scores(self) -> Dict[str, Dict[str, Any]]:
         with self._lock:
