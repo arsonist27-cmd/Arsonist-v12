@@ -1103,3 +1103,260 @@ v15 does **not** break any existing APIs or modes:
 - v14 intelligence layer works unchanged
 
 All v15 features are additive. The planet-scale operating fabric operates above all existing layers.
+
+---
+
+### Arsonist OS v16 — Autonomous Interplanetary AI Fabric
+
+Extends the platform from a planet-scale AI operating fabric into an **autonomous interplanetary distributed AI infrastructure** capable of delay-tolerant coordination, partition-tolerant consensus, disconnected autonomous operation, orbital edge compute, adaptive communication mesh, extreme fault recovery, and interplanetary simulation.
+
+v16 extends infrastructure into disconnected ultra-distributed environments. It does NOT rewrite v15 — it extends upward.
+
+This is NOT science fiction AGI. This is resilient distributed systems engineering adapted for extreme-latency environments.
+
+**Modes (additive — all prior modes still work):**
+
+- **Standalone:** unchanged.
+- **Federation:** unchanged.
+- **Mesh:** unchanged.
+- **Global Fabric:** unchanged.
+- **Intelligence:** unchanged.
+- **Planet-Scale:** unchanged.
+- **Interplanetary:** set `ARSONIST_INTERPLANETARY_MODE=enabled` to activate v16 interplanetary orchestration.
+
+#### New Modules
+
+```text
+deep_space/                           # Delay-tolerant infrastructure
+├── delay_tolerant_queue.py           # Store-and-forward message queue with priority ordering
+├── async_replication.py              # Eventual-consistency replication with vector clocks
+├── disconnected_consensus.py         # Partition-tolerant consensus with authority delegation
+├── store_forward_router.py           # Message routing with link quality awareness
+
+orbital/                              # Orbital compute orchestration
+├── orbital_scheduler.py              # Multi-orbit workload scheduling with latency awareness
+├── satellite_registry.py             # Orbital/ground node registration and health tracking
+├── orbital_routing.py                # Contact-window-aware request routing with relay support
+├── orbital_failover.py               # Disconnection-aware failover and migration
+
+resilience/                           # Extreme fault tolerance
+├── extreme_fault_recovery.py         # Partition recovery, state reconciliation, conflict resolution
+├── partition_manager.py              # Network partition detection, split-brain handling, healing
+├── disconnected_operations.py        # Autonomous local governance during isolation
+
+communications/                       # Adaptive communication
+├── adaptive_mesh.py                  # Dynamic bandwidth/sync optimization with burst support
+├── bandwidth_optimizer.py            # Priority-weighted bandwidth allocation
+├── signal_latency_model.py           # Signal propagation delay modeling (LEO/MEO/GEO/lunar)
+
+simulation/                           # Interplanetary simulation
+├── orbital_sim.py                    # Communication delay, outages, partitions, isolation
+├── partition_sim.py                  # Partition detection, split-brain, cascading failures
+├── delay_test.py                     # High-latency, burst sync, store-forward testing
+
+telemetry/                            # Orbital observability
+├── orbital_metrics.py                # Orbital node health, sync lag, replication backlog
+├── link_health.py                    # Link health monitoring with trend analysis
+
+dashboard/
+├── orbital_panel.py                  # v16 orbital visualization endpoints (13 endpoints)
+```
+
+#### Architecture
+
+```text
+v16 Autonomous Interplanetary AI Fabric
+│
+├── Delay-Tolerant Infrastructure ──── store-and-forward execution
+│   ├── Delay-Tolerant Queue ────────── priority-based async message delivery (5 tiers)
+│   │   └── Priorities: critical > high > normal > low > background
+│   ├── Async Replication ───────────── vector clock causality + conflict resolution
+│   │   └── Strategies: last_write_wins, source_priority, merge, manual
+│   ├── Disconnected Consensus ──────── partition-tolerant voting + authority delegation
+│   │   └── Modes: centralized, delegated, autonomous, partitioned
+│   └── Store-Forward Router ────────── link-quality-aware multi-hop routing
+│       └── States: active, degraded, congested, offline, blackout
+│
+├── Orbital Compute Orchestration
+│   ├── Orbital Scheduler ───────────── multi-orbit workload scheduling
+│   │   └── Modes: latency_optimized, bandwidth_optimized, compute_local, store_forward, balanced
+│   ├── Satellite Registry ──────────── orbital/ground node lifecycle management
+│   │   └── Orbits: LEO, MEO, GEO, HEO, lunar, deep_space, ground
+│   ├── Orbital Routing ─────────────── contact-window-aware request routing
+│   │   └── Types: direct, relay, store_forward, burst, deferred
+│   └── Orbital Failover ───────────── disconnection-aware migration + recovery
+│       └── Triggers: disconnection, blackout, signal_loss, compute_failure, thermal, power
+│
+├── Extreme Fault Tolerance
+│   ├── Extreme Fault Recovery ──────── partition recovery + state reconciliation
+│   │   └── Phases: detection → assessment → reconciliation → restoration → verification
+│   ├── Partition Manager ───────────── split-brain detection + coordinated healing
+│   │   └── Severities: minor, moderate, major, total
+│   └── Disconnected Operations ─────── autonomous local governance during isolation
+│       └── Scopes: scheduling, healing, scaling, optimization, failover, replication
+│
+├── Adaptive Communications
+│   ├── Adaptive Mesh ───────────────── dynamic link optimization + burst sync
+│   │   └── Sync modes: realtime, periodic, burst, opportunistic, deferred
+│   ├── Bandwidth Optimizer ─────────── priority-weighted allocation (5 data classes)
+│   │   └── Data: critical, operational, replication, telemetry, bulk
+│   └── Signal Latency Model ────────── propagation delay modeling
+│       └── Paths: ground↔ground, ground↔LEO/MEO/GEO/lunar, LEO↔LEO, LEO↔GEO, relay
+│
+├── Orbital Observability
+│   ├── Orbital Metrics ─────────────── orbital health snapshots + event logging
+│   └── Link Health Monitor ─────────── trend analysis + predictive degradation detection
+│
+└── Interplanetary Simulation
+    ├── Orbital Simulator ───────────── 5 scenarios (delay, outage, partition, starvation, isolation)
+    ├── Partition Simulator ─────────── 3 scenarios (clean, split-brain, cascading)
+    └── Delay Tester ────────────────── 3 tests (high-latency, burst sync, store-forward)
+```
+
+#### Delay-Tolerant Infrastructure
+
+Store-and-forward execution for extreme-latency environments:
+
+- **Delay-Tolerant Queue**: Priority-ordered async message delivery with TTL-based expiration, retry logic, and batch operations
+- **Async Replication**: Eventual-consistency replication with vector clocks for causality tracking, peer-specific outbound queues, and 4 conflict resolution strategies
+- **Disconnected Consensus**: Partition-tolerant voting with partial decisions (when threshold exceeded but quorum not reached), authority delegation with expiry and scope, and autonomous mode
+- **Store-Forward Router**: Multi-hop message routing with link quality awareness (latency, bandwidth, packet loss), intelligent path selection, and message storage when no route available
+
+#### Orbital Scheduling
+
+Coordinates workloads across orbital and ground nodes:
+
+- **Scoring factors**: Signal latency (40%), compute availability (20%), bandwidth (15%), isolation risk (15%), reliability (15%), queue depth (15%)
+- **Scheduling modes**: `latency_optimized`, `bandwidth_optimized`, `compute_local`, `store_forward`, `balanced`
+- **Batch scheduling**: Priority-sorted batch processing with highest-priority workloads scheduled first
+- **Deferral**: Workloads marked `can_defer` are deferred when no suitable node available
+
+#### Satellite Registry
+
+Manages orbital and ground compute nodes:
+
+- **Orbit types**: LEO (550km), MEO (20,200km), GEO (35,786km), HEO, lunar (384,400km), deep space, ground
+- **Health tracking**: Heartbeat monitoring with orbit-dependent timeouts (10x for lunar/deep space, 3x for GEO/HEO)
+- **Capabilities**: GPU count, compute capacity, memory, storage, power, thermal, uptime tracking
+- **Contact windows**: Next contact window timestamp and duration for scheduling
+
+#### Orbital Routing
+
+Routes requests with contact-window awareness:
+
+- **Direct routes**: Lowest-latency direct links between nodes
+- **Relay routes**: Multi-hop routing through intermediate nodes with bandwidth-constrained path selection
+- **Deferred routing**: Requests deferred when no route available (direct or relay)
+- **Route management**: Dynamic route registration, activation/deactivation, and quality updates
+
+#### Extreme Fault Recovery
+
+Handles prolonged partitions and catastrophic failures:
+
+- **Recovery phases**: Detection → assessment → reconciliation → restoration → verification
+- **Conflict detection**: Automatic state divergence detection between partitioned regions
+- **Conflict resolution**: Per-conflict resolution with strategies (last_write_wins, manual, etc.)
+- **Workload restoration**: Tracked workload continuity with data preservation metrics
+
+#### Partition Management
+
+Detects and manages network partitions:
+
+- **Detection**: Graph-based connectivity analysis to identify disconnected groups
+- **Split-brain**: Detection and tracking of dual-authority situations
+- **Severity classification**: Minor (<20% split), moderate (20-40%), major (>40%), total
+- **Healing**: Coordinated partition healing with duration tracking
+
+#### Disconnected Operations
+
+Autonomous operation during isolation:
+
+- **Operating modes**: Connected → degraded → autonomous → isolated → reconnecting
+- **Local governance**: Scheduling, healing, scaling, optimization, failover, replication
+- **Decision journaling**: All local decisions recorded for post-reconnection sync
+- **Resynchronization**: Automatic sync of unsynced decisions on reconnection
+
+#### Adaptive Communication Mesh
+
+Dynamic link optimization:
+
+- **Link adaptation**: Automatic state transitions based on bandwidth, latency, packet loss, jitter
+- **Sync modes**: Realtime (optimal), periodic (degraded), burst (intermittent), deferred (offline)
+- **Compression**: Auto-enabled on degraded/congested links
+- **Priority queuing**: 5 data priority classes (critical → bulk) with per-link queues
+- **Burst sync**: Batch data transfer during contact windows with compression
+
+#### Signal Latency Model
+
+Physics-based propagation delay modeling:
+
+| Path | One-way Propagation | RTT (with overhead) |
+|------|-------------------|---------------------|
+| Ground ↔ Ground | ~16.7ms | ~43.3ms |
+| Ground ↔ LEO | ~7.0ms | ~28.0ms |
+| Ground ↔ MEO | ~68.9ms | ~151.8ms |
+| Ground ↔ GEO | ~119.4ms | ~252.8ms |
+| Ground ↔ Lunar | ~1,282ms | ~2,578ms |
+| LEO ↔ LEO | ~7.0ms | ~24.0ms |
+
+#### Dashboard (v16 orbital views)
+
+The dashboard exposes orbital visualization endpoints under `/api/v16/orbital/`:
+
+- `overview` — Scheduler, registry, routing, failover, mesh, queue metrics
+- `nodes` — Node summary, active/disconnected/orbital/ground nodes
+- `scheduler` — Scheduler metrics, recent decisions and events
+- `routing` — Routing metrics, active routes, recent decisions
+- `failover` — Failover metrics, active/completed failovers, events
+- `delay_tolerant` — Queue, replication, consensus, router metrics
+- `partitions` — Partition and recovery metrics, active partitions, conflicts
+- `disconnected` — Operations state, metrics, unsynced decisions, peer states
+- `communications` — Mesh metrics, link status, bandwidth, latency reference
+- `link_health` — Link health reports, metrics, events
+- `telemetry` — Orbital snapshots, history, failover/partition history
+- `simulation` — Orbital, partition, and delay test summaries and results
+- `resilience` — Combined recovery, partition, disconnected, failover, mesh metrics
+
+#### Interplanetary Simulation
+
+```bash
+export PYTHONPATH=$PWD
+
+# Orbital simulation (communication delay, outages, partitions, starvation, isolation)
+# Uses OrbitalSimulator with 5 scenario types + full stress test
+
+# Partition simulation (clean partition, split-brain, cascading partition)
+# Uses PartitionSimulator with 3 scenario types + full suite
+
+# Delay testing (high-latency, burst sync, store-forward)
+# Uses DelayTester with 3 test types + full suite
+```
+
+#### Performance Requirements
+
+- Continue operation during partitions
+- Eventual consistency restoration
+- Autonomous disconnected operation
+- Async synchronization architecture
+
+#### Security
+
+- Signed synchronization events
+- Encrypted delayed replication
+- Partition-safe identity systems
+- Resilient trust validation
+
+#### Backward Compatibility
+
+v16 does **not** break any existing APIs or modes:
+
+- v8 standalone clusters work unchanged
+- v9 federation mode works unchanged
+- v10 mesh mode works unchanged
+- v11 AI orchestration works unchanged
+- v12 multi-tenant cloud works unchanged
+- v13 global fabric works unchanged
+- v14 intelligence layer works unchanged
+- v15 planetary orchestration works unchanged
+
+All v16 features are additive. The interplanetary AI fabric operates above all existing layers.
